@@ -92,7 +92,7 @@
 
 {%- block sidebartoc %}
     {%- include "localtoc.html" %}
-    <h3><a href="{{ pathto('index') }}">Menu</a></h3>
+    <h3><a href="{{ pathto('index') }}">Index</a></h3>
     <ul class="sidebar_menu">
         {% for link in sidebar_menu %}
             {% if link.sublinks %}
@@ -105,20 +105,25 @@
                             {% if sublink2.path == 'todo' %}
                             <li class='todo'>{{ sublink2.title }}</li>
                             {% else %}
-                            <li><a href="{{ pathto(sublink2.path) }}">{{ sublink2.title }}</a></li>
+                            {{ render_li(sublink2) }}
                             {% endif %}
                         {% endfor %}
                     </ul>
                     {% elif sublink1.path == 'todo' %}
                     <li class='todo'>{{ sublink1.title }}</li>
                     {% else %}
-                    <li><a href="{{ pathto(sublink1.path) }}">{{ sublink1.title }}</a></li>
+                    {{ render_li(sublink1) }}
                     {% endif %}
                 {% endfor %}
             {% endif %}
         {% endfor %}
     </ul>
 {%- endblock %}
+
+{%- macro render_li(sublink) %}
+
+    <li><a {% if pagename == sublink.path %} class="current-page" {% else %} href="{{ pathto(sublink.path) }}" {% endif %}> {{ sublink.title }}</a></li>  
+{%- endmacro %}
 
 {%- macro chapter_switcher() %}
     <div class="chapter_switcher">

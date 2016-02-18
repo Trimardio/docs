@@ -29,6 +29,13 @@ html, body{
   width: 90%;
 }
 
+div.sphinxsidebar a.current-page,
+div.sphinxsidebar a.current-page:hover,
+div.sphinxsidebar a.current-page:focus {
+    color: #ffc;
+    font-weight: bold;
+}
+
 /* chapters switcher */
 .last {
     float: left;
@@ -64,3 +71,4 @@ html, body{
 .body .chapter_switcher > a:focus{
     background-color: #C9C9C9;
 }
+
