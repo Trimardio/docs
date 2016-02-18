@@ -43,9 +43,24 @@ html, body{
     width: calc(100% + 40px);
     height: 30px;
     margin-left: -20px;
+    margin-bottom: 20px;
 }
 
-.body .chapter_switcher > h3 { 
+.body .chapter_switcher > a { 
     width: calc(50% - 10px);
-    margin: 0;
+    height: 100%;
+    padding: 5px;
+    background-color: #F2F2F2;
+    font-size: 21px;
+    text-transform: capitalize;
+}
+
+.body .chapter_switcher > a:hover {
+    color: #4B85AF;
+    background-color: #D4D4D4;
+    text-decoration: none;
+}
+
+.body .chapter_switcher > a:focus{
+    background-color: #C9C9C9;
 }
