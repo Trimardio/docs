@@ -1,5 +1,6 @@
 {%- extends "hyperboria-theme/layout.html" %}
 
 {% block body %}
-  {{ body|replace('.md', '.html') }}
+    {{ chapter_switcher() }}
+    {{ body|replace('.md', '.html') }}
 {% endblock %}
