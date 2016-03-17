@@ -1,7 +1,29 @@
 {%- extends "hyperboria-theme/layout.html" %}
 
+{% set todo_text_content = "
+
+<div class='todo-text'>
+<p>This page has not been redacted yet. Perhaps you could help building it?</p>
+
+<h1>Github</h1>
+
+<a href='https://github.com/hyperboria/docs'>The github repo </a> where you can add your modification</p>
+<p>You'll of course have to wait that your modifications are approved and then pulled on the server</p>
+
+<p>If you never used github <a href='https://help.github.com/articles/editing-files-in-another-user-s-repository/'>here is a small instruction</a></p>
+
+<h1>IRC</h1>
+
+<p>Maybe you prefer to talk with the community first?</p>
+<p>Then go on <a href='http://chat.efnet.org/irc.cgi?chan=%23cjdns'>irc://irc.efnet.org/#cjdns</a></p>
+
+</div>
+
+"
+%}
+
 {% block body %}
     {{ chapter_switcher() }}
-    {{ body|replace('.md', '.html') }}
+    {{ body|replace('.md', '.html')|replace('todo_text', todo_text_content) }}
     {{ chapter_switcher() }}
 {% endblock %}
