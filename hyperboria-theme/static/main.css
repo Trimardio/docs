@@ -1,6 +1,5 @@
 @import url("default.css");
 
-
 html, body{
     font-family: Helvetica-neue, Sans-Serif;
     height: 100%;
@@ -21,7 +20,7 @@ html, body{
     margin-right: 0;
 }
 
-.todo {
+div.sphinxsidebar .todo a {
     color: #ccc;
 }
 
@@ -29,11 +28,61 @@ html, body{
   width: 90%;
 }
 
-div.sphinxsidebar a.current-page,
-div.sphinxsidebar a.current-page:hover,
-div.sphinxsidebar a.current-page:focus {
-    color: #ffc;
+div.sphinxsidebar .current-page:hover,
+div.sphinxsidebar .current-page:hover a,
+div.sphinxsidebar .current-page:focus,
+div.sphinxsidebar .current-page:focus a,
+div.sphinxsidebar .current-page,
+div.sphinxsidebar .current-page a {
+    background-color: #ffc;
     font-weight: bold;
+    color: black;
+}
+
+
+/* small trick to hide content without js: click on input check it, and from then we only show sublist from the next ul. */
+/* input are basically not display because they only serve to be checked but we shouldn't see the radio button */
+.sphinxsidebar input.subtitle {
+    display:none;
+}
+
+.sphinxsidebar ul ul li {
+    display:none;
+}
+
+.sphinxsidebar input:checked ~ ul li {
+    display: block;
+}
+
+.sphinxsidebar .subtitle {
+    cursor: pointer;
+    display: list-item;
+}
+
+.sphinxsidebar .subtitle:hover {
+    color:gray;
+}
+
+/* Carret */
+.sphinxsidebar ul > div {
+    position: relative;
+}
+
+.sphinxsidebar .fa-caret-down {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    transform: rotateZ(-90deg);
+}
+
+.sphinxsidebar .fa-caret-down.current-page {
+    background-color: none;
+    font-weight: normal;
+    color: black;
+}
+
+.sphinxsidebar input:checked ~ i.fa-caret-down {
+    transform: rotateZ(0deg);
 }
 
 /* chapters switcher */
@@ -48,9 +97,9 @@ div.sphinxsidebar a.current-page:focus {
 
 .chapter_switcher {
     width: calc(100% + 40px);
-    height: 30px;
     margin-left: -20px;
     margin-bottom: 20px;
+    display: inline-block;
 }
 
 .body .chapter_switcher > a { 
@@ -72,3 +121,14 @@ div.sphinxsidebar a.current-page:focus {
     background-color: #C9C9C9;
 }
 
+/* todo text */
+body .todo-text {
+    margin: 20px;
+    background-color: rgba(148, 202, 225, 0.41);
+    padding: 11px;
+}
+
+body .todo-text > h1 {
+    background-color: transparent ;
+    border-bottom: none ;
+}

@@ -2,17 +2,34 @@
     hyperboria-theme/layout.html
     ~~~~~~~~~~~~~~~~~~~
 
-    Sphinx layout template for the default theme.
-
-    :copyright: Copyright 2007-2014 by the Sphinx team, see AUTHORS.
-    :license: BSD, see LICENSE for details.
+    Sphinx layout template for the hyberboria doc
+    
+    Note that we used a hack to use .md file with shpinx. Thus a need for a lot of jinja functions in order to reestablish some basic sphinx functions. 
 #}
+
 
 {%- extends "basic/layout.html" %}
 
+
+
+{# Add script and css links #}
+{%- block extrahead %} 
+<script>
+    $(document).load(function() {
+        mermaid.initialize();
+    });
+</script>
+{% endblock %}
+{% set script_files = script_files + ["_static/analytics.js"] %}
+{% set script_files = script_files + ["_static/analytics.h.js"] %}
+{% set script_files = script_files + ["_static/mermaid.min.js"] %}
+{% set css_files = css_files + ["_static/css/font-awesome.min.css"] %}
+
+
+{# Whole menu displayed on the left is in this object. Note that it was copied on hand from index.md. TODO: this need to be done automatically #}
 {% set sidebar_menu = [
-    {'title': 'About :', 'sublinks': [
-        {'title': 'Asking Questions *TODO*', 'path':'todo'},
+    {'title': 'About', 'sublinks': [
+        {'title': 'Asking Questions *TODO*', 'path':'wtfm', 'todo': True},
         {'title': 'Peering', 'path':'faq/peering'},
         {'title': 'Security', 'path':'faq/security'},
         {'title': 'Meshlocals', 'path':'meshlocals/intro', 'sublinks': [
@@ -32,17 +49,17 @@
             {'title': 'Security Specification', 'path':'security-specifications'},
         ]},
         {'title': 'Installation', 'sublinks': [
-            {'title': 'Most Linuxes *TODO*', 'path':'todo'},
+            {'title': 'Most Linuxes *TODO*', 'path':'install/linux', 'todo': True},
             {'title': 'OpenWrt', 'path':'install/openwrt'},
-            {'title': 'Android *TODO*', 'path':'todo'},
-            {'title': 'Firefox OS *TODO*', 'path':'todo'},
+            {'title': 'Android *TODO*', 'path':'install/android', 'todo': True},
+            {'title': 'Firefox OS *TODO*', 'path':'install/firefoxos', 'todo': True},
             {'title': 'OS X', 'path':'install/osx'},
             {'title': 'Debian Wheezy', 'path':'install/debian-wheezy'},
             {'title': 'Debian Jessie', 'path':'install/debian-jessie'},
             {'title': 'Arch', 'path':'install/arch'},
             {'title': 'Fedora', 'path':'install/fedora'},
-            {'title': 'FreeBSD *TODO*', 'path':'todo'},
-            {'title': 'OpenBSD *TODO*', 'path':'todo'},
+            {'title': 'FreeBSD *TODO*', 'path':'install/freebsd', 'todo': True},
+            {'title': 'OpenBSD *TODO*', 'path':'install/openbsd', 'todo': True},
             {'title': 'Windows', 'path':'install/windows'},
             {'title': 'Building *on* Windows', 'path':'install/build-on-windows'},
             {'title': 'Securing your Windows system', 'path':'config/windows-firewall'},
@@ -51,7 +68,7 @@
             {'title': 'Setup', 'path':'config/configure'},
             {'title': 'Operator guidelines', 'path':'cjdns/operator-guidelines'},
             {'title': 'Securing your system', 'path':'config/network-services'},
-            {'title': 'Tools *TODO*', 'path':'todo'},
+            {'title': 'Tools *TODO*', 'path':'tools/index', 'todo': True},
             {'title': 'Third party tools', 'path':'ctrls'},
             {'title': 'Admin API', 'path':'cjdns/admin-api'},
         ]},
@@ -86,12 +103,30 @@
         ]},
         {'title': 'OS/distro-specific quirks', 'path':'bugs/distro-quirks'},
         {'title': 'Reporting bugs', 'path':'bugs/reporting'}
+    ]},
+    {'title': 'Work In Progress', 'sublinks': [
+        {'title': 'Interesting links', 'path':'notes/links'},
+        {'title': "'ansuz' Q&A with Arceliar", 'path':'notes/arc-workings'},
+        {'title': 'cjdns-core', 'path':'notes/cjdns-core'},
+        {'title': 'cjdroute.conf', 'path':'notes/cryptography'},
+        {'title': 'OS/distro-specific quirks', 'path':'notes/cjdroute-conf'},
+        {'title': './do', 'path':'notes/do'},
+        {'title': 'DNS ideas', 'path':'notes/dns'},
+        {'title': 'DJC layer model', 'path':'djc-layer-model'},
+        {'title': 'Benchmarks', 'path':'benchmark'},
+        {'title': 'Fun with the switch', 'path':'switchfun'},
     ]}
 ]
 %}
 
+
+
+{# Render the menu on the left using sidebar_menu #}
 {%- block sidebartoc %}
+    <div id="page-menu">
     {%- include "localtoc.html" %}
+    </div>
+    <div id="website-menu">
     <h3><a href="{{ pathto('index') }}">Index</a></h3>
     <ul class="sidebar_menu">
         {% for link in sidebar_menu %}
@@ -99,41 +134,53 @@
                 <h4>{{ link.title }}</h4>
                 {% for sublink1 in link.sublinks %}
                     {% if sublink1.sublinks %}
-                    <li class="subtitle">{{ sublink1.title }}</li>
-                    <ul>
+                        {% set current_page_in_sublinks = [] %}
                         {% for sublink2 in sublink1.sublinks %}
-                            {% if sublink2.path == 'todo' %}
-                            <li class='todo'>{{ sublink2.title }}</li>
-                            {% else %}
-                            {{ render_li(sublink2) }}
+                            {% if sublink2.path == pagename %}
+                                {% if current_page_in_sublinks.append(1) %}{% endif %}
                             {% endif %}
                         {% endfor %}
-                    </ul>
-                    {% elif sublink1.path == 'todo' %}
-                    <li class='todo'>{{ sublink1.title }}</li>
+                        <div>
+                            {{ input_label(sublink1, current_page_in_sublinks) }}
+                            <ul>
+                            {% for sublink2 in sublink1.sublinks %}
+                                {{ render_li(sublink2) }}
+                            {% endfor %}
+                            </ul>
+                        </div>
                     {% else %}
-                    {{ render_li(sublink1) }}
+                        {{ render_li(sublink1) }}
                     {% endif %}
                 {% endfor %}
             {% endif %}
         {% endfor %}
     </ul>
+    </div>
 {%- endblock %}
 
-{%- macro render_li(sublink) %}
 
-    <li><a {% if pagename == sublink.path %} class="current-page" {% else %} href="{{ pathto(sublink.path) }}" {% endif %}> {{ sublink.title }}</a></li>  
+{# Render all entry in the menu who have a sublist #}
+{%- macro input_label(sublink, current_page_in_sublinks) %}
+    {% set current_page_is_link = (sublink.path and pagename == sublink.path) %}
+    <label class="subtitle {% if current_page_is_link %} current-page {% endif %}" for="input-{{ sublink.title }}" {% if sublink.path %} onclick="window.location.href='{{ pathto(sublink.path) }}'"{% endif %} >{{ sublink.title }}</label>
+    <input class="subtitle" type=radio id="input-{{ sublink.title }}" name="group" {% if current_page_in_sublinks or current_page_is_link %}checked{% endif %}>
+    <i class="fa fa-caret-down {% if current_page_is_link %} current-page {% endif %}"></i>
 {%- endmacro %}
 
+
+{# Render all entry in the menu who do not have a sublist #}
+{%- macro render_li(sublink) %}
+    <li class="{% if pagename == sublink.path %}current-page {% endif %}{% if sublink.todo %}todo{% endif %}"><a {% if not pagename == sublink.path %} href="{{ pathto(sublink.path) }}" {% endif %}> {{ sublink.title }}</a></li>  
+{%- endmacro %}
+
+
+{# Render the "previous" and "next" pages #}
 {%- macro chapter_switcher() %}
     <div class="chapter_switcher">
     {% for link in sidebar_menu %}
         {% for sublink1 in link.sublinks %}
         {% set sublink1_index = link.sublinks.index(sublink1) %}
         {% set last_chapter = link.sublinks[ sublink1_index - 1 ] %}
-        {% if sublink1_index - 1 < 0 %}
-            
-        {% endif %}
         {% set next_chapter = link.sublinks[ sublink1_index + 1 ] %}
             {% if sublink1.path == pagename %}
                 {{ load_next_chapter(next_chapter) }}
@@ -142,19 +189,22 @@
                 {% if sublink1.sublinks %}
                     {% for sublink2 in sublink1.sublinks %}
                         {% if sublink2.path == pagename %}
-                        {% set sublink2_index = sublink1.sublinks.index(sublink2) %}
-                        {% set is_first = (sublink2_index == 0) %}
-                        {% set is_last = (sublink2_index == sublink1.sublinks|length - 1) %}
+                            {% set sublink2_index = sublink1.sublinks.index(sublink2) %}
+                            {% set last_subchapter = sublink1.sublinks[ sublink2_index - 1 ] %}
+                            {% set next_subchapter = sublink1.sublinks[ sublink2_index + 1 ] %}
+                            {% set is_first = (sublink2_index == 0) %}
+                            {% set is_last = (sublink2_index == sublink1.sublinks|length - 1) %}
                             {% if is_first %}
                                 {{ load_last_chapter(last_chapter) }}
                             {% else %}
-                            {{ render_chapter_button('last', sublink1.sublinks[ sublink2_index - 1 ]) }}
+                                {{ load_last_chapter(last_subchapter) }}
                             {% endif %}
+                            
                             
                             {% if is_last %}
                                 {{ load_next_chapter(next_chapter) }}
                             {% else %}
-                            {{ render_chapter_button('next', sublink1.sublinks[ sublink2_index + 1 ]) }}
+                                {{ load_next_chapter(next_subchapter) }}
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -165,15 +215,17 @@
     </div>
 {%- endmacro %}
 
+
 {%- macro load_last_chapter(last_chapter) %}
     {% if last_chapter %}
         {% if last_chapter.sublinks %}
-        {{ render_chapter_button('last', last_chapter.sublinks[0]) }}
+        {{ render_chapter_button('last', last_chapter.sublinks[-1]) }}
         {% else %}
         {{ render_chapter_button('last', last_chapter) }}
         {% endif %}
     {% endif %}
 {%- endmacro %}
+
 
 {%- macro load_next_chapter(next_chapter) %}
     {% if next_chapter %}
@@ -184,6 +236,7 @@
         {% endif %}
     {% endif %}
 {%- endmacro %}
+
 
 {% macro render_chapter_button(type, link) %}
     <a class="chapter {{ type }}" href="{{ pathto(link.path) }}">{{ type }} Chapter: {{ link.title }}</a>
