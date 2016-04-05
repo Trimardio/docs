@@ -10,6 +10,20 @@ html, body{
 }
 
 /* Menu */
+/* Menu containers */
+
+.document .sphinxsidebar {
+    position: fixed;
+    margin-left: 0;
+}
+
+#page-menu > ul,
+#website-menu > ul {
+    overflow-y: auto;
+    height: inherit;
+}
+
+/* Menu lists */
 .document .sphinxsidebar li {
     text-overflow: ellipsis;
     list-style-position:inside;
@@ -131,4 +145,25 @@ body .todo-text {
 body .todo-text > h1 {
     background-color: transparent ;
     border-bottom: none ;
+}
+
+/* body-footer */
+.source-page {
+    padding: 3px;
+    background-color: #FFFFCC;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.source-page a {
+    margin-left: 13px;
+}
+
+.source-page a i {
+    margin-right: 6px;
+}
+
+/* footer */
+.footer {
+    position: fixed;    
 }

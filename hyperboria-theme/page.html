@@ -22,8 +22,85 @@
 "
 %}
 
+{# Render the "previous" and "next" pages #}
+{%- macro chapter_switcher() %}
+    <div class="chapter_switcher">
+    {% for link in sidebar_menu %}
+        {% for sublink1 in link.sublinks %}
+        {% set sublink1_index = link.sublinks.index(sublink1) %}
+        {% set last_chapter = link.sublinks[ sublink1_index - 1 ] %}
+        {% set next_chapter = link.sublinks[ sublink1_index + 1 ] %}
+            {% if sublink1.path == pagename %}
+                {{ load_next_chapter(next_chapter) }}
+                {{ load_last_chapter(last_chapter) }}
+            {% else %}
+                {% if sublink1.sublinks %}
+                    {% for sublink2 in sublink1.sublinks %}
+                        {% if sublink2.path == pagename %}
+                            {% set sublink2_index = sublink1.sublinks.index(sublink2) %}
+                            {% set last_subchapter = sublink1.sublinks[ sublink2_index - 1 ] %}
+                            {% set next_subchapter = sublink1.sublinks[ sublink2_index + 1 ] %}
+                            {% set is_first = (sublink2_index == 0) %}
+                            {% set is_last = (sublink2_index == sublink1.sublinks|length - 1) %}
+                            {% if is_first %}
+                                {{ load_last_chapter(last_chapter) }}
+                            {% else %}
+                                {{ load_last_chapter(last_subchapter) }}
+                            {% endif %}
+                            
+                            
+                            {% if is_last %}
+                                {{ load_next_chapter(next_chapter) }}
+                            {% else %}
+                                {{ load_next_chapter(next_subchapter) }}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </div>
+{%- endmacro %}
+
+
+{%- macro load_last_chapter(last_chapter) %}
+    {% if last_chapter %}
+        {% if last_chapter.sublinks %}
+        {{ render_chapter_button('last', last_chapter.sublinks[-1]) }}
+        {% else %}
+        {{ render_chapter_button('last', last_chapter) }}
+        {% endif %}
+    {% endif %}
+{%- endmacro %}
+
+
+{%- macro load_next_chapter(next_chapter) %}
+    {% if next_chapter %}
+        {% if next_chapter.sublinks %}  
+        {{ render_chapter_button('next', next_chapter.sublinks[0]) }}
+        {% else %}
+        {{ render_chapter_button('next', next_chapter) }}
+        {% endif %}
+    {% endif %}
+{%- endmacro %}
+
+
+{% macro render_chapter_button(type, link) %}
+    <a class="chapter {{ type }}" href="{{ pathto(link.path) }}">{{ type }} Chapter: {{ link.title }}</a>
+{%- endmacro %}
+
+{# render link to source page #}
+{%- macro source_page_link() %}
+    <div class="source-page">
+        <a href="{{ pathto('_sources/' + sourcename, true)|e }}" rel="nofollow"><i class="fa fa-file-text"></i>{{ _('Show Source') }}</a>
+        <a href="{{ pathto('_sources/' + pagename)|replace('../_sources', 'https://github.com/hyperboria/docs/blob/master')|replace('.html', '.md') }}" rel="nofollow"><i class="fa fa-github"></i>Github Link</a>
+    </div>
+{%- endmacro %}
+
 {% block body %}
     {{ chapter_switcher() }}
     {{ body|replace('.md', '.html')|replace('todo_text', todo_text_content) }}
     {{ chapter_switcher() }}
+    {{ source_page_link() }}
 {% endblock %}
